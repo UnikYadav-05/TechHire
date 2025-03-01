@@ -1,1 +1,2 @@
 # TechHire
+TechHire is an intelligent hiring platform that streamlines the recruitment process for companies by enabling them to onboard, assign HR roles, and post job openings through a centralized dashboard. The platform ensures an efficient and structured hiring workflow by integrating various assessment stages for candidates, such as aptitude tests, data structures & algorithms (DSA) challenges, coding assessments, and assignments.
