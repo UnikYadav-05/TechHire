@@ -1,0 +1,6 @@
+spring:
+  data:
+   mongodb:
+     uri: mongodb+srv://unikyadav:techHire12345@cluster0.csuvc.mongodb.net/?retryWrites=true&w=majority
+     database: TechHireDB
+
