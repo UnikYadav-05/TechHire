@@ -22,6 +22,4 @@ keycloak:
   client-id: techhire-backend
   client-secret: bECDj192K8BnMzOOZiuR60ShoNxxZtzF
   grant-type: client_credentials
-  username: admin
-  password: admin
-
+  bearer-only: true

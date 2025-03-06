@@ -2,6 +2,9 @@ package com.example.TechHire.service;
 
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -26,30 +29,41 @@ public class AuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        String requestBody = UriComponentsBuilder.newInstance()
-                .queryParam("client_id", CLIENT_ID)
-                .queryParam("client_secret", CLIENT_SECRET)
-                .queryParam("grant_type", "password")
-                .queryParam("username", loginRequest.getEmail())
-                .queryParam("password", loginRequest.getPassword())
-                .build()
-                .encode()
-                .toString()
-                .substring(1);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", CLIENT_ID);
+        body.add("client_secret", CLIENT_SECRET); // Add client secret
+        body.add("grant_type", "password");
+        body.add("username", loginRequest.getEmail());
+        body.add("password", loginRequest.getPassword());
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Map> response = restTemplate.exchange(KEYCLOAK_URL, HttpMethod.POST, requestEntity, Map.class);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            System.out.println("✅ User Logged In: " + loginRequest.getEmail());
-            System.out.println("🔑 Access Token: " + response.getBody().get("access_token"));
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    KEYCLOAK_URL, // Use the correct Keycloak token endpoint
+                    request,
+                    String.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                System.out.println("✅ Login Successful: " + response.getBody());
+                return response;
+            } else {
+                System.out.println("❌ Login Failed: " + response.getBody());
+                return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+            }
+        } catch (HttpClientErrorException e) {
+            System.out.println("❌ Keycloak Error: " + e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
         }
-
-        return response;
     }
 
+
+
+
+
+
     // 🔹 2️⃣ Register User (With Role Assignment)
-    // 🔹 Register User (No user token required, uses admin token)
     public ResponseEntity<?> registerUser(RegisterRequest registerRequest) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -87,7 +101,6 @@ public class AuthService {
         return response;
     }
 
-
     // 🔹 3️⃣ Get User ID from Keycloak
     private String getUserId(String username) {
         HttpHeaders headers = new HttpHeaders();
@@ -104,19 +117,20 @@ public class AuthService {
         return null;
     }
 
-    // 🔹 4️⃣ Assign Role to User
+    // 🔹 4️⃣ Assign Role to User (FIXED)
     private void assignRoleToUser(String userId, String roleName) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(getAdminToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // ✅ Get Role ID
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        String roleUrl = KEYCLOAK_ROLE_URL + "/" + roleName;
-        ResponseEntity<Map> roleResponse = restTemplate.exchange(roleUrl, HttpMethod.GET, requestEntity, Map.class);
-        String roleId = (String) roleResponse.getBody().get("id");
+        // ✅ Fetch Role ID Dynamically
+        String roleId = getRoleId(roleName);
+        if (roleId == null) {
+            System.out.println("❌ Role Not Found: " + roleName);
+            return;
+        }
 
-        // ✅ Assign Role to User
+        // ✅ Prepare Role Assignment Data
         List<Map<String, Object>> roles = new ArrayList<>();
         Map<String, Object> role = new HashMap<>();
         role.put("id", roleId);
@@ -127,36 +141,46 @@ public class AuthService {
         String assignRoleUrl = KEYCLOAK_ADMIN_URL + "/" + userId + "/role-mappings/realm";
 
         restTemplate.exchange(assignRoleUrl, HttpMethod.POST, assignRoleRequest, String.class);
+        System.out.println("✅ Assigned Role: " + roleName + " to User ID: " + userId);
     }
 
-    // 🔹 5️⃣ Get Admin Token (Client Credentials Flow)
+    // 🔹 5️⃣ Get Role ID (NEW FIX)
+    private String getRoleId(String roleName) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getAdminToken());
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<List> response = restTemplate.exchange(KEYCLOAK_ROLE_URL, HttpMethod.GET, requestEntity, List.class);
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            for (Object roleObj : response.getBody()) {
+                Map<String, Object> role = (Map<String, Object>) roleObj;
+                if (role.get("name").equals(roleName)) {
+                    return (String) role.get("id");
+                }
+            }
+        }
+        return null;
+    }
+
+    // 🔹 6️⃣ Get Admin Token (Client Credentials Flow) ✅ FIXED
     private String getAdminToken() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        String requestBody = UriComponentsBuilder.newInstance()
-                .queryParam("client_id", CLIENT_ID)
-                .queryParam("client_secret", CLIENT_SECRET)
-                .queryParam("grant_type", "client_credentials")
-                .build()
-                .encode()
-                .toString()
-                .substring(1);
+        String requestBody = "client_id=" + CLIENT_ID +
+                "&client_secret=" + CLIENT_SECRET +
+                "&grant_type=client_credentials";
 
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<Map> response = restTemplate.exchange(KEYCLOAK_URL, HttpMethod.POST, requestEntity, Map.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             String token = response.getBody().get("access_token").toString();
-            System.out.println("🔑 Fetched Admin Token: " + token); // 🔍 Print Token for Debugging
+            System.out.println("🔑 Fetched Admin Token: " + token);
             return token;
         } else {
             throw new RuntimeException("❌ Failed to get admin token: " + response.getBody());
         }
     }
-
-
-
-
-
 }
