@@ -25,12 +25,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/auth/hr/dashboard").hasRole("HR")
                         .requestMatchers(HttpMethod.GET, "/api/auth/profile").hasAnyRole("HR", "CANDIDATE")
                         .requestMatchers(HttpMethod.GET, "/api/auth/admin").hasRole("ADMIN")
+
+                        // Allow public access to job postings
+                        .requestMatchers(HttpMethod.GET, "/api/jobs_posting/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/jobs_posting").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/jobs_posting/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/jobs_posting/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/job_applications/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/job_applications/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/job_applications/**").permitAll()
+
+
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())) // ✅ Convert Keycloak roles
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // ✅ Stateless for JWT
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
@@ -38,8 +50,8 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_"); // ✅ Ensure roles have "ROLE_"
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access.roles"); // ✅ Extract roles from Keycloak
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("realm_access.roles");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
