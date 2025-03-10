@@ -32,9 +32,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/jobs_posting/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/jobs_posting/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/job_applications/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/job_applications/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/job_applications/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/job_applied/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/job_applied/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/job_applied/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/candidates/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/candidates/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/candidates/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/candidates/**").permitAll()
 
 
                         .anyRequest().authenticated()
