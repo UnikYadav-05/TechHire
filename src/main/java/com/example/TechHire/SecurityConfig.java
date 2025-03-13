@@ -36,18 +36,31 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/job_applied/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/job_applied/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/candidates/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/candidates/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/candidates/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/candidates/**").permitAll()
-
                         .requestMatchers(HttpMethod.GET, "/api/assessments/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/assessments").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/assessments/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/assessments/**").permitAll()
 
 
+                        .requestMatchers(HttpMethod.POST, "/api/candidates/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/candidates/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/candidates/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/candidates/**").permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/api/addInterviews/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/addInterviews/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/addInterviews/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/addInterviews/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/addMembers/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/addMembers/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/addMembers/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/addMembers/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/applications/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/applications/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/applications/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/applications/**").permitAll()
 
 
                         .anyRequest().authenticated()
