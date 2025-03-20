@@ -18,7 +18,7 @@ public class Assessment {
     private String createdBy;
     private Date creationDate;
     private Date deadline;
-    private String assignTo;
+    private String type_of_test;
     private String status;
     private String attachments;
 }
