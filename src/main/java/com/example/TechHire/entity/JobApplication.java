@@ -6,7 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "job_applied")
 @Data
 public class JobApplication {
-    private String jobId;       // Fetched from job posting
+    private String jobId;
+    private String appliedFor;       // Fetched from job posting
     private String candidateId; // Fetched from candidate profile
     private String name;
     private String email;
