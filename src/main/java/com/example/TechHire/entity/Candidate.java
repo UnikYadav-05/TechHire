@@ -16,7 +16,7 @@ public class Candidate {
     private String name;
     private String mail;
     private String phoneNumber;
-    private String resume;
+    private String resumeUrl;
     private List<String> skills;
     private String education;
     private String experience;
