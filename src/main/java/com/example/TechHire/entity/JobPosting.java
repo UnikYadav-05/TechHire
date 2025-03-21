@@ -12,6 +12,7 @@ import java.util.List;
 public class JobPosting {
 
     @Id
+    private String id;
     private String jobId;
     private String title;
     private String company;
