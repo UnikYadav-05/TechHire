@@ -42,10 +42,10 @@ public class ShortlistCandidateService {
                 jobAppliedId,
                 candidate.getId(),
                 application.getJobId(),
+                application.getAppliedFor(),
                 candidate.getName(),
                 candidate.getMail(),
-                application.getResumeUrl(),
-                application.getAppliedFor()
+                application.getResumeUrl()
         );
 
         application.setStatus("Shortlisted");
