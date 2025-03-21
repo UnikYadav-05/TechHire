@@ -13,4 +13,5 @@ public class JobApplication {
     private String resumeUrl;
     private String address;
     private String phoneNumber;
+    private String status = "Pending";
 }
