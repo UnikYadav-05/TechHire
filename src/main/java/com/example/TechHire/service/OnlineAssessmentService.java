@@ -29,7 +29,7 @@ public class OnlineAssessmentService {
         OnlineAssessment assessment = new OnlineAssessment(
                 shortlistCandidate.getCandidateId(),
                 shortlistCandidate.getJobId(),
-                shortlistCandidate.getApplicationId(),
+                shortlistCandidate.getJobAppliedId(),
                 testDate, testStartTime, testEndTime, testDeadline
         );
 

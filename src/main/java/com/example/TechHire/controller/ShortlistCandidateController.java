@@ -15,9 +15,9 @@ public class ShortlistCandidateController {
     private ShortlistCandidateService shortlistCandidateService;
 
     // HR Shortlists a candidate
-    @PostMapping("/{applicationId}")
-    public ShortlistCandidate shortlistCandidate(@PathVariable String applicationId) {
-        return shortlistCandidateService.shortlistCandidate(applicationId);
+    @PostMapping("/{jobAppliedId}")
+    public ShortlistCandidate shortlistCandidate(@PathVariable String jobAppliedId) {
+        return shortlistCandidateService.shortlistCandidate(jobAppliedId);
     }
 
     // Get all shortlisted candidates

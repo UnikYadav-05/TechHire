@@ -29,7 +29,7 @@ public class CodingRoundService {
         CodingRound codingRound = new CodingRound(
                 onlineAssessment.getCandidateId(),
                 onlineAssessment.getJobId(),
-                onlineAssessment.getApplicationId(),
+                onlineAssessment.getJobAppliedId(),
                 codingTestDate,
                 codingTestStartTime,
                 codingTestEndTime,

@@ -7,5 +7,6 @@ import java.util.List;
 public interface ShortlistCandidateRepository extends MongoRepository<ShortlistCandidate, String> {
     List<ShortlistCandidate> findByJobId(String jobId);
     List<ShortlistCandidate> findByCandidateId(String candidateId);
-    boolean existsByApplicationId(String applicationId);
+
+    boolean existsByJobAppliedId(String jobAppliedId);
 }

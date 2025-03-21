@@ -2,9 +2,11 @@ package com.example.TechHire.service;
 
 import com.example.TechHire.entity.Application;
 import com.example.TechHire.entity.Candidate;
+import com.example.TechHire.entity.JobApplication;
 import com.example.TechHire.entity.ShortlistCandidate;
 import com.example.TechHire.repository.ApplicationRepository;
 import com.example.TechHire.repository.CandidateRepository;
+import com.example.TechHire.repository.JobApplicationRepository;
 import com.example.TechHire.repository.ShortlistCandidateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ import java.util.List;
 public class ShortlistCandidateService {
 
     @Autowired
-    private ApplicationRepository applicationRepository;
+    private JobApplicationRepository applicationRepository;
 
     @Autowired
     private CandidateRepository candidateRepository;
@@ -24,20 +26,20 @@ public class ShortlistCandidateService {
     private ShortlistCandidateRepository shortlistCandidateRepository;
 
     // HR Shortlists a Candidate
-    public ShortlistCandidate shortlistCandidate(String applicationId) {
+    public ShortlistCandidate shortlistCandidate(String jobAppliedId) {
         // Check if the application is already shortlisted
-        if (shortlistCandidateRepository.existsByApplicationId(applicationId)) {
+        if (shortlistCandidateRepository.existsByJobAppliedId(jobAppliedId)) {
             throw new RuntimeException("Candidate is already shortlisted for this application.");
         }
 
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+        JobApplication application = applicationRepository.findById(jobAppliedId)
+                .orElseThrow(() -> new RuntimeException("JobApplication not found"));
 
         Candidate candidate = candidateRepository.findById(application.getCandidateId())
                 .orElseThrow(() -> new RuntimeException("Candidate not found"));
 
         ShortlistCandidate shortlist = new ShortlistCandidate(
-                applicationId,
+                jobAppliedId,
                 candidate.getId(),
                 application.getJobId(),
                 candidate.getName(),
