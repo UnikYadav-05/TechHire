@@ -18,7 +18,7 @@ public class ShortlistCandidate {
     private String candidateEmail;
     private String resumeUrl;
 
-    public ShortlistCandidate(String jobAppliedId, String candidateId, String appliedFor ,String jobId, String candidateName, String candidateEmail, String resumeUrl) {
+    public ShortlistCandidate(String jobAppliedId, String candidateId,String jobId, String appliedFor ,String candidateName, String candidateEmail, String resumeUrl) {
         this.jobAppliedId = jobAppliedId;
         this.candidateId = candidateId;
         this.jobId = jobId;

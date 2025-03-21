@@ -25,8 +25,8 @@ public class OnlineAssessment {
         this.candidateId = candidateId;
         this.jobId = jobId;
         this.jobAppliedId = jobAppliedId;
-        this.testDate = testDate;
         this.appliedFor = appliedFor;
+        this.testDate = testDate;
         this.testStartTime = testStartTime;
         this.testEndTime = testEndTime;
         this.testDeadline = testDeadline;

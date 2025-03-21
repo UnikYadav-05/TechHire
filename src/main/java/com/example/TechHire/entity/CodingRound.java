@@ -30,8 +30,8 @@ public class CodingRound {
         this.candidateId = candidateId;
         this.jobId = jobId;
         this.jobAppliedId = jobAppliedId;
-        this.codingTestDate = codingTestDate;
         this.appliedFor = appliedFor;
+        this.codingTestDate = codingTestDate;
         this.codingTestStartTime = codingTestStartTime;
         this.codingTestEndTime = codingTestEndTime;
         this.codingTestDeadline = codingTestDeadline;
