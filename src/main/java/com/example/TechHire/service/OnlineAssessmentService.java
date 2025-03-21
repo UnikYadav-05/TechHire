@@ -30,6 +30,7 @@ public class OnlineAssessmentService {
                 shortlistCandidate.getCandidateId(),
                 shortlistCandidate.getJobId(),
                 shortlistCandidate.getJobAppliedId(),
+                shortlistCandidate.getAppliedFor(),
                 testDate, testStartTime, testEndTime, testDeadline
         );
 

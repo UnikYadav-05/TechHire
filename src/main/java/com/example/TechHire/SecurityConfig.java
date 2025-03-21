@@ -65,6 +65,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/shortlist/**").permitAll()
                         .requestMatchers("/api/assessment/**").permitAll()
                         .requestMatchers("/api/codingRound/**").permitAll()
+                        .requestMatchers("/api/notifications/**").permitAll()
+
 
 
                         .anyRequest().authenticated()

@@ -15,6 +15,7 @@ public class CodingRound {
     private String jobId;
     private String jobAppliedId;
     private String status; // "Pending", "Completed", "Failed"
+    private String appliedFor;
     private LocalDate codingTestDate;
     private LocalTime codingTestStartTime;
     private LocalTime codingTestEndTime;
@@ -22,7 +23,7 @@ public class CodingRound {
     private String codingPlatformUrl;
     private String instructions;
 
-    public CodingRound(String candidateId, String jobId, String jobAppliedId,
+    public CodingRound(String candidateId, String jobId, String jobAppliedId, String appliedFor,
                        LocalDate codingTestDate, LocalTime codingTestStartTime,
                        LocalTime codingTestEndTime, LocalTime codingTestDeadline,
                        String codingPlatformUrl, String instructions) {
@@ -30,6 +31,7 @@ public class CodingRound {
         this.jobId = jobId;
         this.jobAppliedId = jobAppliedId;
         this.codingTestDate = codingTestDate;
+        this.appliedFor = appliedFor;
         this.codingTestStartTime = codingTestStartTime;
         this.codingTestEndTime = codingTestEndTime;
         this.codingTestDeadline = codingTestDeadline;

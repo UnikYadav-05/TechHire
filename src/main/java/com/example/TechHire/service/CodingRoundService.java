@@ -30,6 +30,7 @@ public class CodingRoundService {
                 onlineAssessment.getCandidateId(),
                 onlineAssessment.getJobId(),
                 onlineAssessment.getJobAppliedId(),
+                onlineAssessment.getAppliedFor(),
                 codingTestDate,
                 codingTestStartTime,
                 codingTestEndTime,

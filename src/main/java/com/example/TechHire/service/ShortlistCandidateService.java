@@ -44,7 +44,8 @@ public class ShortlistCandidateService {
                 application.getJobId(),
                 candidate.getName(),
                 candidate.getMail(),
-                application.getResumeUrl()
+                application.getResumeUrl(),
+                application.getAppliedFor()
         );
 
         application.setStatus("Shortlisted");

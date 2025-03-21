@@ -14,17 +14,19 @@ public class OnlineAssessment {
     private String candidateId;
     private String jobId;
     private String jobAppliedId;
+   private String appliedFor;
     private String status; // "Pending", "Completed", "Expired"
     private LocalDate testDate;
     private LocalTime testStartTime;
     private LocalTime testEndTime;
     private LocalTime testDeadline;
 
-    public OnlineAssessment(String candidateId, String jobId, String jobAppliedId, LocalDate testDate, LocalTime testStartTime, LocalTime testEndTime, LocalTime testDeadline) {
+    public OnlineAssessment(String candidateId, String jobId, String jobAppliedId, String appliedFor,LocalDate testDate, LocalTime testStartTime, LocalTime testEndTime, LocalTime testDeadline) {
         this.candidateId = candidateId;
         this.jobId = jobId;
         this.jobAppliedId = jobAppliedId;
         this.testDate = testDate;
+        this.appliedFor = appliedFor;
         this.testStartTime = testStartTime;
         this.testEndTime = testEndTime;
         this.testDeadline = testDeadline;
