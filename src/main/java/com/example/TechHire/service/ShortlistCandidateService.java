@@ -26,7 +26,7 @@ public class ShortlistCandidateService {
     // HR Shortlists a Candidate
     public ShortlistCandidate shortlistCandidate(String applicationId) {
         // Check if the application is already shortlisted
-        if (shortlistCandidateRepository.existsByApplicationId(applicationId)) {
+        if (shortlistCandidateRepository.existsByJobAppliedId(applicationId)) {
             throw new RuntimeException("Candidate is already shortlisted for this application.");
         }
 
