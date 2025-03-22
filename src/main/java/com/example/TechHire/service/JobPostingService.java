@@ -14,9 +14,18 @@ public class JobPostingService {
     @Autowired
     private JobPostingRepository jobPostingRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     // Create a new job posting
     public JobPosting createJob(JobPosting jobPosting) {
-        return jobPostingRepository.save(jobPosting);
+        JobPosting savedJob = jobPostingRepository.save(jobPosting);
+
+        // 🔔 Notify All Candidates About New Job Posting
+        String message = "New job posted: " + savedJob.getTitle() + " at " + savedJob.getCompany();
+        notificationService.sendNotificationToAllCandidates(message);
+
+        return savedJob;
     }
 
     // Get all job postings
@@ -41,14 +50,27 @@ public class JobPostingService {
                     job.setApplicationDeadline(jobDetails.getApplicationDeadline());
                     job.setSalary(jobDetails.getSalary());
                     job.setSkillsRequired(jobDetails.getSkillsRequired());
-                    return jobPostingRepository.save(job);
+                    JobPosting updatedJob = jobPostingRepository.save(job);
+
+                    // 🔔 Notify All Candidates About Job Update
+                    String message = "Job updated: " + updatedJob.getTitle() + " at " + updatedJob.getCompany();
+                    notificationService.sendNotificationToAllCandidates(message);
+
+                    return updatedJob;
                 })
                 .orElse(null);
     }
 
     // Delete a job posting
     public void deleteJob(String jobId) {
-        jobPostingRepository.deleteById(jobId);
+        Optional<JobPosting> jobPosting = jobPostingRepository.findById(jobId);
+        jobPosting.ifPresent(job -> {
+            jobPostingRepository.deleteById(jobId);
+
+            // 🔔 Notify All Candidates About Job Deletion
+            String message = "Job removed: " + job.getTitle() + " at " + job.getCompany();
+            notificationService.sendNotificationToAllCandidates(message);
+        });
     }
 }
 

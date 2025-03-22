@@ -19,6 +19,9 @@ public class CodingRoundService {
     @Autowired
     private OnlineAssessmentRepository onlineAssessmentRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     // HR Sends Coding Round to a Candidate
     public CodingRound sendCodingRound(String assessmentId, LocalDate codingTestDate, LocalTime codingTestStartTime,
                                        LocalTime codingTestEndTime, LocalTime codingTestDeadline,
@@ -39,7 +42,15 @@ public class CodingRoundService {
                 instructions
         );
 
-        return codingRoundRepository.save(codingRound);
+        CodingRound savedCodingRound = codingRoundRepository.save(codingRound);
+
+        // 🔔 Send Notification for Coding Round
+        String message = "You have been invited to a Coding Round for " + onlineAssessment.getAppliedFor() +
+                ". Test Date: " + codingTestDate + ", Time: " + codingTestStartTime + " - " + codingTestEndTime +
+                ". Access the test here: " + codingPlatformUrl;
+        notificationService.sendNotification(onlineAssessment.getCandidateId(), message);
+
+        return savedCodingRound;
     }
 
     // Get all coding rounds

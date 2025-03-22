@@ -13,9 +13,20 @@ public class AddMemberService {
     @Autowired
     private AddMemberRepository memberRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     // Add a new member
     public AddMember addMember(AddMember member) {
-        return memberRepository.save(member);
+        AddMember savedMember = memberRepository.save(member);
+
+        // Send notification to the new member
+        notificationService.sendNotification(
+                savedMember.getId(),
+                "Welcome " + savedMember.getName() + "! You have been added as a " + savedMember.getDesignation() + "."
+        );
+
+        return savedMember;
     }
 
     // Get all members
@@ -44,11 +55,29 @@ public class AddMemberService {
         existingMember.setDesignation(updatedMember.getDesignation());
         existingMember.setMobileNo(updatedMember.getMobileNo());
 
-        return memberRepository.save(existingMember);
+        AddMember updated = memberRepository.save(existingMember);
+
+        // Send notification for update
+        notificationService.sendNotification(
+                updated.getId(),
+                "Your profile details have been updated."
+        );
+
+        return updated;
     }
+
 
     // Delete a member
     public void deleteMember(String id) {
+        AddMember member = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
         memberRepository.deleteById(id);
+
+        // Send notification for deletion
+        notificationService.sendNotification(
+                id,
+                "Your profile has been removed from the system."
+        );
     }
 }

@@ -19,6 +19,9 @@ public class OnlineAssessmentService {
     @Autowired
     private ShortlistCandidateRepository shortlistCandidateRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public OnlineAssessment sendOnlineAssessment(String shortlistId, LocalDate testDate,
                                                  LocalTime testStartTime, LocalTime testEndTime,
                                                  LocalTime testDeadline) {
@@ -34,7 +37,14 @@ public class OnlineAssessmentService {
                 testDate, testStartTime, testEndTime, testDeadline
         );
 
-        return onlineAssessmentRepository.save(assessment);
+        OnlineAssessment savedAssessment = onlineAssessmentRepository.save(assessment);
+
+        // 🔔 Send Notification for Online Assessment
+        String message = "You have received an Online Assessment for " + shortlistCandidate.getAppliedFor() +
+                ". Test Date: " + testDate + ", Time: " + testStartTime + " - " + testEndTime;
+        notificationService.sendNotification(shortlistCandidate.getCandidateId(), message);
+
+        return savedAssessment;
     }
 
     public List<OnlineAssessment> getAllAssessments() {

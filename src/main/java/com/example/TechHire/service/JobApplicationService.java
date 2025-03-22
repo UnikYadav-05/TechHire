@@ -23,15 +23,26 @@ public class JobApplicationService {
     @Autowired
     private JobPostingRepository jobPostingRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     // Apply for a job (fetches jobId & candidateId automatically)
     public JobApplication applyForJob(String jobId, String candidateId, JobApplication jobApplication) {
         JobPosting job = jobPostingRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
         Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new RuntimeException("Candidate not found"));
 
-        jobApplication.setJobId(job.getJobId());
+        jobApplication.setJobId(job.getId());
         jobApplication.setCandidateId(candidate.getId());
 
-        return jobApplicationRepository.save(jobApplication);
+        JobApplication savedApplication = jobApplicationRepository.save(jobApplication);
+
+        // 🔔 Send Notification to Candidate
+        String message = "You have successfully applied for the job: " + job.getTitle();
+        notificationService.sendNotification(candidate.getId(), message);
+
+
+        return savedApplication;
+
     }
 
     // Get all job applications
@@ -55,6 +66,12 @@ public class JobApplicationService {
         applications.stream()
                 .filter(app -> app.getJobId().equals(jobId))
                 .findFirst()
-                .ifPresent(jobApplicationRepository::delete);
+                .ifPresent(jobApplication -> {
+                    jobApplicationRepository.delete(jobApplication);
+
+                    // 🔔 Send Notification to Candidate
+                    String message = "Your application for the job: " + jobId + " has been withdrawn.";
+                    notificationService.sendNotification(candidateId, message);
+                });
     }
 }

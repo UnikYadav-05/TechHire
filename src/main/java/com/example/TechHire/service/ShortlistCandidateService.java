@@ -25,6 +25,9 @@ public class ShortlistCandidateService {
     @Autowired
     private ShortlistCandidateRepository shortlistCandidateRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     // HR Shortlists a Candidate
     public ShortlistCandidate shortlistCandidate(String jobAppliedId) {
         // Check if the application is already shortlisted
@@ -50,6 +53,9 @@ public class ShortlistCandidateService {
 
         application.setStatus("Shortlisted");
         applicationRepository.save(application); // Update status in applications
+
+        String message = "Congratulations! You have been shortlisted.";
+        notificationService.sendNotification(candidate.getId(), message);
         return shortlistCandidateRepository.save(shortlist); // Save in shortlist_candidate collection
     }
 

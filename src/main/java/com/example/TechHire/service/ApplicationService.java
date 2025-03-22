@@ -30,6 +30,12 @@ public class ApplicationService {
             throw new RuntimeException("Job posting not found!");
         }
 
+        // ✅ Prevent duplicate applications
+        if (applicationRepository.findByCandidateIdAndJobId(candidateId, jobId).isPresent()) {
+            throw new RuntimeException("You have already applied for this job!");
+        }
+
+
         Application application = new Application();
         application.setCandidateId(candidateId);
         application.setJobId(jobId);

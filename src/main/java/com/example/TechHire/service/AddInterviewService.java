@@ -24,6 +24,9 @@ public class AddInterviewService {
     @Autowired
     private JobPostingRepository jobPostingRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     // Schedule an interview
     public AddInterview scheduleInterview(String candidateId, String jobId, AddInterview interview) {
         Candidate candidate = candidateRepository.findById(candidateId)
@@ -33,11 +36,29 @@ public class AddInterviewService {
 
         interview.setCandidateId(candidate.getId());
         interview.setName(candidate.getName());
-        interview.setJobId(job.getJobId());
+        interview.setJobId(job.getId());
         interview.setCreatedAt(Instant.now());
         interview.setUpdatedAt(Instant.now());
 
-        return interviewRepository.save(interview);
+        AddInterview savedInterview = interviewRepository.save(interview);
+
+        // ✅ Notify candidate
+        notificationService.sendNotification(
+                candidate.getId(),
+                "Your interview for the position of " + job.getTitle() + " has been scheduled on " +
+                        interview.getDateInterview() + " at " + interview.getTimeInterview() + "."
+        );
+
+        // ✅ Notify assigned manager (if assigned)
+        if (interview.getAssignedManager() != null) {
+            notificationService.sendNotification(
+                    interview.getAssignedManager(),
+                    "You have been assigned to interview " + candidate.getName() + " for the position of " +
+                            job.getTitle() + " on " + interview.getDateInterview() + "."
+            );
+        }
+
+        return savedInterview;
     }
 
     // Get all interviews
@@ -74,11 +95,46 @@ public class AddInterviewService {
         interview.setStatus(updatedInterview.getStatus());
         interview.setUpdatedAt(Instant.now());
 
-        return interviewRepository.save(interview);
+        AddInterview updated = interviewRepository.save(interview);
+
+        // ✅ Notify candidate about reschedule
+        notificationService.sendNotification(
+                interview.getCandidateId(),
+                "Your interview has been updated to " + updated.getDateInterview() +
+                        " at " + updated.getTimeInterview() + "."
+        );
+
+        // ✅ Notify assigned manager about reschedule
+        if (updated.getAssignedManager() != null) {
+            notificationService.sendNotification(
+                    updated.getAssignedManager(),
+                    "The interview for candidate " + updated.getName() +
+                            " has been updated to " + updated.getDateInterview() + "."
+            );
+        }
+
+        return updated;
     }
 
     // Delete an interview
     public void deleteInterview(String id) {
+        AddInterview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Interview not found"));
+
         interviewRepository.deleteById(id);
+
+        // ✅ Notify candidate about cancellation
+        notificationService.sendNotification(
+                interview.getCandidateId(),
+                "Your interview has been canceled."
+        );
+
+        // ✅ Notify assigned manager about cancellation
+        if (interview.getAssignedManager() != null) {
+            notificationService.sendNotification(
+                    interview.getAssignedManager(),
+                    "The interview for candidate " + interview.getName() + " has been canceled."
+            );
+        }
     }
 }
