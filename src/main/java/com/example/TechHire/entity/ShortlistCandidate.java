@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Document(collection = "shortlist_candidate")
 @Data
 public class ShortlistCandidate {
@@ -18,6 +20,7 @@ public class ShortlistCandidate {
     private String candidateEmail;
     private String resumeUrl;
     private String phoneNumber;
+    private LocalDate appliedDate;
 
     public ShortlistCandidate(String jobAppliedId, String candidateId,String jobId, String appliedFor ,String candidateName, String candidateEmail, String resumeUrl,String phoneNumber) {
         this.jobAppliedId = jobAppliedId;
@@ -28,6 +31,7 @@ public class ShortlistCandidate {
         this.candidateEmail = candidateEmail;
         this.resumeUrl = resumeUrl;
         this.phoneNumber=phoneNumber;
-        this.status = "Shortlisted"; // Default status
+        this.status = "Shortlisted";
+        this.appliedDate = LocalDate.now();
     }
 }
