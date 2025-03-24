@@ -18,4 +18,7 @@ public class JobApplication {
     private String address;
     private String phoneNumber;
     private String status = "Pending";
+    private String salary;
+    private String company;
+    private String location;
 }
