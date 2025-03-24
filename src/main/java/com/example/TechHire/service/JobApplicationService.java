@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JobApplicationService {
@@ -28,20 +29,28 @@ public class JobApplicationService {
 
     // Apply for a job (fetches jobId & candidateId automatically)
     public JobApplication applyForJob(String jobId, String candidateId, JobApplication jobApplication) {
-        JobPosting job = jobPostingRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
-        Candidate candidate = candidateRepository.findById(candidateId).orElseThrow(() -> new RuntimeException("Candidate not found"));
+        JobPosting job = jobPostingRepository.findById(jobId)
+        .orElseThrow(() -> new RuntimeException("Job not found"));
+    Candidate candidate = candidateRepository.findById(candidateId)
+        .orElseThrow(() -> new RuntimeException("Candidate not found"));
 
-        jobApplication.setJobId(job.getId());
-        jobApplication.setCandidateId(candidate.getId());
+    // ✅ Check if the candidate has already applied for this job
+    Optional<JobApplication> existingApplication = jobApplicationRepository.findByJobIdAndCandidateId(jobId, candidateId);
+    if (existingApplication.isPresent()) {
+        throw new IllegalStateException("Already applied for this job.");
+    }
 
-        JobApplication savedApplication = jobApplicationRepository.save(jobApplication);
+    // Save the new application
+    jobApplication.setJobId(job.getId());
+    jobApplication.setCandidateId(candidate.getId());
 
-        // 🔔 Send Notification to Candidate
-        String message = "You have successfully applied for the job: " + job.getTitle();
-        notificationService.sendNotification(candidate.getId(), message);
+    JobApplication savedApplication = jobApplicationRepository.save(jobApplication);
 
+    // 🔔 Send Notification to Candidate
+    String message = "You have successfully applied for the job: " + job.getTitle();
+    notificationService.sendNotification(candidate.getId(), message);
 
-        return savedApplication;
+    return savedApplication;
 
     }
 

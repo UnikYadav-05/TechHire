@@ -17,8 +17,9 @@ public class ShortlistCandidate {
     private String candidateName;
     private String candidateEmail;
     private String resumeUrl;
+    private String phoneNumber;
 
-    public ShortlistCandidate(String jobAppliedId, String candidateId,String jobId, String appliedFor ,String candidateName, String candidateEmail, String resumeUrl) {
+    public ShortlistCandidate(String jobAppliedId, String candidateId,String jobId, String appliedFor ,String candidateName, String candidateEmail, String resumeUrl,String phoneNumber) {
         this.jobAppliedId = jobAppliedId;
         this.candidateId = candidateId;
         this.jobId = jobId;
@@ -26,6 +27,7 @@ public class ShortlistCandidate {
         this.candidateName = candidateName;
         this.candidateEmail = candidateEmail;
         this.resumeUrl = resumeUrl;
+        this.phoneNumber=phoneNumber;
         this.status = "Shortlisted"; // Default status
     }
 }
