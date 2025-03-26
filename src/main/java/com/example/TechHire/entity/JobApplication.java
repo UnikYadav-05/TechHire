@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class JobApplication {
     @Id
     private String id;
+    private String hrId;
     private String jobId;
     private String appliedFor;       // Fetched from job posting
     private String candidateId; // Fetched from candidate profile

@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface JobApplicationRepository extends MongoRepository<JobApplication, String> {
     List<JobApplication> findByCandidateId(String candidateId);
     List<JobApplication> findByJobId(String jobId);
+    List<JobApplication> findByHrId(String hrId);
     Optional<JobApplication> findByJobIdAndCandidateId(String jobId, String candidateId);
 }

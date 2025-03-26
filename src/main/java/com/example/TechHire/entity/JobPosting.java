@@ -13,6 +13,7 @@ public class JobPosting {
 
     @Id
     private String id;
+    private String hrId;
     private String title;
     private String company;
     private String location;

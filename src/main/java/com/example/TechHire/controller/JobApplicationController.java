@@ -18,9 +18,8 @@ public class JobApplicationController {
     @PostMapping("/{jobId}/{candidateId}")
     public JobApplication applyForJob(
             @PathVariable String jobId,
-            @PathVariable String candidateId,
-            @RequestBody JobApplication jobApplication) {
-        return jobApplicationService.applyForJob(jobId, candidateId, jobApplication);
+            @PathVariable String candidateId) {
+        return jobApplicationService.applyForJob(jobId, candidateId);
     }
 
     // Get all job applications
@@ -39,6 +38,11 @@ public class JobApplicationController {
     @GetMapping("/job/{jobId}")
     public List<JobApplication> getApplicationsByJob(@PathVariable String jobId) {
         return jobApplicationService.getApplicationsByJob(jobId);
+    }
+
+    @GetMapping("/hr/{hrId}")
+    public List<JobApplication> getApplicationsByHr(@PathVariable String hrId) {
+        return jobApplicationService.getApplicationsByHr(hrId);
     }
 
     // Delete job application

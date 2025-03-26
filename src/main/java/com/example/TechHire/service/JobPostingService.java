@@ -17,8 +17,9 @@ public class JobPostingService {
     @Autowired
     private NotificationService notificationService;
 
-    // Create a new job posting
-    public JobPosting createJob(JobPosting jobPosting) {
+    // ✅ Create a new job posting (Now linked with HR ID)
+    public JobPosting createJob(String hrId, JobPosting jobPosting) {
+        jobPosting.setHrId(hrId); // Assign HR ID to the job
         JobPosting savedJob = jobPostingRepository.save(jobPosting);
 
         // 🔔 Notify All Candidates About New Job Posting
@@ -28,17 +29,22 @@ public class JobPostingService {
         return savedJob;
     }
 
-    // Get all job postings
+    // ✅ Get all job postings
     public List<JobPosting> getAllJobs() {
         return jobPostingRepository.findAll();
     }
 
-    // Get a job posting by ID
+    // ✅ Get a job posting by ID
     public Optional<JobPosting> getJobById(String jobId) {
         return jobPostingRepository.findById(jobId);
     }
 
-    // Update an existing job posting
+    // ✅ Get all jobs posted by a specific HR
+    public List<JobPosting> getJobsByHR(String hrId) {
+        return jobPostingRepository.findByHrId(hrId);
+    }
+
+    // ✅ Update an existing job posting
     public JobPosting updateJob(String jobId, JobPosting jobDetails) {
         return jobPostingRepository.findById(jobId)
                 .map(job -> {
@@ -50,18 +56,12 @@ public class JobPostingService {
                     job.setApplicationDeadline(jobDetails.getApplicationDeadline());
                     job.setSalary(jobDetails.getSalary());
                     job.setSkillsRequired(jobDetails.getSkillsRequired());
-                    JobPosting updatedJob = jobPostingRepository.save(job);
-
-                    // 🔔 Notify All Candidates About Job Update
-                    String message = "Job updated: " + updatedJob.getTitle() + " at " + updatedJob.getCompany();
-                    notificationService.sendNotificationToAllCandidates(message);
-
-                    return updatedJob;
+                    return jobPostingRepository.save(job);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Job not found"));
     }
 
-    // Delete a job posting
+    // ✅ Delete a job posting
     public void deleteJob(String jobId) {
         Optional<JobPosting> jobPosting = jobPostingRepository.findById(jobId);
         jobPosting.ifPresent(job -> {
@@ -73,4 +73,3 @@ public class JobPostingService {
         });
     }
 }
-

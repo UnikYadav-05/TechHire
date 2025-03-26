@@ -35,7 +35,7 @@ public class SecurityConfig {
 
                         // Allow public access to job postings
                         .requestMatchers(HttpMethod.GET, "/api/jobs_posting/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/jobs_posting").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/jobs_posting/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/jobs_posting/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/jobs_posting/**").permitAll()
 
@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/job_applied/**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/assessments/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/assessments").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/assessments/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/assessments/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/assessments/**").permitAll()
 

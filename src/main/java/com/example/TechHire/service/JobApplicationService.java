@@ -28,30 +28,42 @@ public class JobApplicationService {
     private NotificationService notificationService;
 
     // Apply for a job (fetches jobId & candidateId automatically)
-    public JobApplication applyForJob(String jobId, String candidateId, JobApplication jobApplication) {
+    public JobApplication applyForJob(String jobId, String candidateId) {
         JobPosting job = jobPostingRepository.findById(jobId)
-        .orElseThrow(() -> new RuntimeException("Job not found"));
-    Candidate candidate = candidateRepository.findById(candidateId)
-        .orElseThrow(() -> new RuntimeException("Candidate not found"));
+                .orElseThrow(() -> new RuntimeException("Job not found"));
 
-    // ✅ Check if the candidate has already applied for this job
-    Optional<JobApplication> existingApplication = jobApplicationRepository.findByJobIdAndCandidateId(jobId, candidateId);
-    if (existingApplication.isPresent()) {
-        throw new IllegalStateException("Already applied for this job.");
-    }
+        Candidate candidate = candidateRepository.findById(candidateId)
+                .orElseThrow(() -> new RuntimeException("Candidate not found"));
 
-    // Save the new application
-    jobApplication.setJobId(job.getId());
-    jobApplication.setCandidateId(candidate.getId());
+        // ✅ Check if the candidate has already applied for this job
+        Optional<JobApplication> existingApplication = jobApplicationRepository.findByJobIdAndCandidateId(jobId, candidateId);
+        if (existingApplication.isPresent()) {
+            throw new IllegalStateException("Already applied for this job.");
+        }
 
-    JobApplication savedApplication = jobApplicationRepository.save(jobApplication);
+        // Create and save the new job application
+        JobApplication jobApplication = new JobApplication();
+        jobApplication.setJobId(job.getId());
+        jobApplication.setCandidateId(candidate.getId());
+        jobApplication.setAppliedFor(job.getTitle());
+        jobApplication.setCompany(job.getCompany());
+        jobApplication.setLocation(job.getLocation());
+        jobApplication.setSalary(String.valueOf(job.getSalary())); // Convert to String
+        jobApplication.setHrId(job.getHrId()); // Fetch HR ID from JobPosting
+        jobApplication.setName(candidate.getName());
+        jobApplication.setEmail(candidate.getMail());
+        jobApplication.setResumeUrl(candidate.getResumeUrl());
+        jobApplication.setAddress(candidate.getAddress());
+        jobApplication.setPhoneNumber(candidate.getPhoneNumber());
+        jobApplication.setStatus("Pending");
 
-    // 🔔 Send Notification to Candidate
-    String message = "You have successfully applied for the job: " + job.getTitle();
-    notificationService.sendNotification(candidate.getId(), message);
+        JobApplication savedApplication = jobApplicationRepository.save(jobApplication);
 
-    return savedApplication;
+        // 🔔 Send Notification to Candidate
+        String message = "You have successfully applied for the job: " + job.getTitle();
+        notificationService.sendNotification(candidate.getId(), message);
 
+        return savedApplication;
     }
 
     // Get all job applications
@@ -67,6 +79,10 @@ public class JobApplicationService {
     // Get applications by job ID
     public List<JobApplication> getApplicationsByJob(String jobId) {
         return jobApplicationRepository.findByJobId(jobId);
+    }
+
+    public List<JobApplication> getApplicationsByHr(String hrId) {
+        return jobApplicationRepository.findByHrId(hrId);
     }
 
     // Delete job application
