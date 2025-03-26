@@ -51,7 +51,7 @@ public class JobApplicationService {
         jobApplication.setSalary(String.valueOf(job.getSalary())); // Convert to String
         jobApplication.setHrId(job.getHrId()); // Fetch HR ID from JobPosting
         jobApplication.setName(candidate.getName());
-        jobApplication.setEmail(candidate.getMail());
+        jobApplication.setEmail(candidate.getEmail());
         jobApplication.setResumeUrl(candidate.getResumeUrl());
         jobApplication.setAddress(candidate.getAddress());
         jobApplication.setPhoneNumber(candidate.getPhoneNumber());

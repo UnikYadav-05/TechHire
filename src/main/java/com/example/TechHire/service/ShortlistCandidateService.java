@@ -48,7 +48,7 @@ public class ShortlistCandidateService {
                 application.getJobId(),
                 application.getAppliedFor(),
                 candidate.getName(),
-                candidate.getMail(),
+                candidate.getEmail(),
                 application.getResumeUrl(),
                 application.getPhoneNumber()
         );
