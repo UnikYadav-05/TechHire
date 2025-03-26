@@ -35,7 +35,7 @@ public class NotificationController {
         return ResponseEntity.ok("✅ Notifications marked as read.");
     }
 
-    // 🔹 Send Notification
+    // 🔹 Send Notification to a User (Real-Time & Stored)
     @PostMapping("/send")
     public ResponseEntity<String> sendNotification(@RequestBody Map<String, String> request) {
         String userId = request.get("userId");
@@ -47,6 +47,19 @@ public class NotificationController {
 
         notificationService.sendNotification(userId, message);
         return ResponseEntity.ok("✅ Notification sent successfully.");
+    }
+
+    // 🔹 Send Notification to All Candidates (Real-Time & Stored)
+    @PostMapping("/sendToAll")
+    public ResponseEntity<String> sendNotificationToAllCandidates(@RequestBody Map<String, String> request) {
+        String message = request.get("message");
+
+        if (message == null) {
+            return ResponseEntity.badRequest().body("❌ Missing message.");
+        }
+
+        notificationService.sendNotificationToAllCandidates(message);
+        return ResponseEntity.ok("✅ Notification sent to all candidates.");
     }
 
     // 🔹 Delete Notification
