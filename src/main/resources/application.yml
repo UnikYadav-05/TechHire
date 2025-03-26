@@ -19,7 +19,9 @@ spring:
 keycloak:
   auth-server-url: http://localhost:8080
   realm: TechHire
-  client-id: techhire-backend
-  client-secret: bECDj192K8BnMzOOZiuR60ShoNxxZtzF
-  grant-type: client_credentials
+  resource: techhire-backend
+  credentials:
+    secret: sov5dBqt5XSqMEaTK9YXafmPsUsIqLAi
+  ssl-required: external
   bearer-only: true
+  use-resource-role-mappings: true

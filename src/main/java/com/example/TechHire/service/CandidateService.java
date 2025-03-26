@@ -32,16 +32,16 @@ public class CandidateService {
         if (optionalCandidate.isPresent()) {
             Candidate candidate = optionalCandidate.get();
             candidate.setName(candidateDetails.getName());
-            candidate.setMail(candidateDetails.getMail());
+            candidate.setEmail(candidateDetails.getEmail());
             candidate.setPhoneNumber(candidateDetails.getPhoneNumber());
             candidate.setResumeUrl(candidateDetails.getResumeUrl());
             candidate.setSkills(candidateDetails.getSkills());
             candidate.setEducation(candidateDetails.getEducation());
             candidate.setExperience(candidateDetails.getExperience());
-            candidate.setCoverLetter(candidateDetails.getCoverLetter());
             candidate.setAddress(candidateDetails.getAddress());
-            candidate.setJobApplied(candidateDetails.getJobApplied());
-
+            candidate.setCodingProfile(candidateDetails.getCodingProfile());
+            candidate.setGithub(candidateDetails.getGithub());
+            candidate.setLinkedin(candidateDetails.getLinkedin());
             return candidateRepository.save(candidate);
         } else {
             throw new RuntimeException("Candidate not found with ID: " + id);

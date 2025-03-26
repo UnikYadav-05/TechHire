@@ -14,14 +14,14 @@ public class Candidate {
     private String id;
 
     private String name;
-    private String mail;
+    private String email;
     private String phoneNumber;
-    private String resumeUrl;
+    private String address;
     private List<String> skills;
     private String education;
     private String experience;
-    private String coverLetter;
-    private String address;
-    private List<String> jobApplied;
-
+    private String linkedin;
+    private String github;
+    private String codingProfile;
+    private String resumeUrl;
 }

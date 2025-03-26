@@ -18,7 +18,7 @@ public class AuthService {
 
     private final String KEYCLOAK_URL = "http://localhost:8080/realms/TechHire/protocol/openid-connect/token";
     private final String CLIENT_ID = "techhire-backend";
-    private final String CLIENT_SECRET = "bECDj192K8BnMzOOZiuR60ShoNxxZtzF";
+    private final String CLIENT_SECRET = "sov5dBqt5XSqMEaTK9YXafmPsUsIqLAi";
     private final String KEYCLOAK_ADMIN_URL = "http://localhost:8080/admin/realms/TechHire/users";
     private final String KEYCLOAK_ROLE_URL = "http://localhost:8080/admin/realms/TechHire/roles";
 
