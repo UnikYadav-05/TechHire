@@ -30,6 +30,11 @@ public class CandidateController {
         return candidateService.getCandidateById(id);
     }
 
+    @GetMapping("/email/{email}")
+    public Optional<Candidate> getCandidateByEmail(@PathVariable String email) {
+        return candidateService.getCandidateByEmail(email);
+    }
+
     @PutMapping("/{id}")
     public Candidate updateCandidate(@PathVariable String id, @RequestBody Candidate candidateDetails) {
         return candidateService.updateCandidate(id, candidateDetails);

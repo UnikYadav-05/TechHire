@@ -77,6 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/notifications/**").permitAll()
                         .requestMatchers("/api/assessment/upload-scores").permitAll()
                         .requestMatchers("/api/hr/**").permitAll()
+                        .requestMatchers("/api/email/send").permitAll()
 
 
 

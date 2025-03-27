@@ -26,6 +26,10 @@ public class CandidateService {
         return candidateRepository.findById(id);
     }
 
+    public Optional<Candidate> getCandidateByEmail(String email) {
+        return candidateRepository.findByEmail(email);
+    }
+
     public Candidate updateCandidate(String id, Candidate candidateDetails) {
         Optional<Candidate> optionalCandidate = candidateRepository.findById(id);
 
