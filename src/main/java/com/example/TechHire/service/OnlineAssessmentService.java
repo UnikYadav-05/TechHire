@@ -39,6 +39,9 @@ public class OnlineAssessmentService {
         ShortlistCandidate shortlistCandidate = shortlistCandidateRepository.findById(shortlistId)
                 .orElseThrow(() -> new RuntimeException("Shortlisted Candidate not found"));
 
+        shortlistCandidate.setStatus("Pending");
+        shortlistCandidateRepository.save(shortlistCandidate);
+
         OnlineAssessment assessment = new OnlineAssessment(
                 shortlistCandidate.getCandidateId(),
                 shortlistCandidate.getJobId(),
@@ -48,8 +51,8 @@ public class OnlineAssessmentService {
                 shortlistCandidate.getCandidateName(),
                 shortlistCandidate.getCandidateEmail(),
                 shortlistCandidate.getPhoneNumber()
-
         );
+
 
         OnlineAssessment savedAssessment = onlineAssessmentRepository.save(assessment);
 
