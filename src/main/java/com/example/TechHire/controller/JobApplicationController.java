@@ -45,6 +45,13 @@ public class JobApplicationController {
         return jobApplicationService.getApplicationsByHr(hrId);
     }
 
+    @GetMapping("/{jobId}/{candidateId}")
+    public JobApplication getApplicationByJobAndCandidate(
+            @PathVariable String jobId,
+            @PathVariable String candidateId) {
+        return jobApplicationService.getApplicationByJobAndCandidate(jobId, candidateId);
+    }
+
     // Delete job application
     @DeleteMapping("/{jobId}/{candidateId}")
     public void deleteApplication(@PathVariable String jobId, @PathVariable String candidateId) {

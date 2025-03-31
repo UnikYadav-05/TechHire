@@ -85,6 +85,12 @@ public class JobApplicationService {
         return jobApplicationRepository.findByHrId(hrId);
     }
 
+    public JobApplication getApplicationByJobAndCandidate(String jobId, String candidateId) {
+        return jobApplicationRepository.findByJobIdAndCandidateId(jobId, candidateId)
+                .orElseThrow(() -> new RuntimeException("Job application not found"));
+    }
+
+
     // Delete job application
     public void deleteApplication(String jobId, String candidateId) {
         List<JobApplication> applications = jobApplicationRepository.findByCandidateId(candidateId);
