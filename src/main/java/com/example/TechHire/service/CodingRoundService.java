@@ -35,58 +35,75 @@ public class CodingRoundService {
 
     // **Method to update scores from CSV file**
     public Map<String, Object> updateCodingRoundScoresFromCsv(MultipartFile file) {
-        int updatedCount = 0, notFoundCount = 0, missingDataCount = 0, invalidFormatCount = 0;
+        int updatedCount = 0;
+        int notFoundCount = 0;
+        int missingDataCount = 0;
+        int invalidFormatCount = 0;
 
         CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                .setDelimiter(';') // Using semicolon delimiter
+                .setDelimiter(';')
                 .setHeader()
                 .setSkipHeaderRecord(true)
                 .setIgnoreHeaderCase(true)
                 .setTrim(true)
                 .build();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(reader, csvFormat)) {
 
             for (CSVRecord record : csvParser) {
                 try {
-                    String candidateEmail = record.get("Candidate Email").trim();
-                    String scoreStr = record.get("Score").trim();
+                    String candidateEmail = record.get("CandidateEmail");
+                    String scoreStr = record.get("Score");
 
-                    if (candidateEmail.isEmpty() || scoreStr.isEmpty()) {
+                    System.out.println("Processing record: Email=" + candidateEmail + ", Score=" + scoreStr);
+
+                    if (candidateEmail == null || candidateEmail.isEmpty() ||
+                            scoreStr == null || scoreStr.isEmpty()) {
                         missingDataCount++;
+                        System.out.println("Skipping record due to missing data.");
                         continue;
                     }
 
-                    // Convert score string to double (handling European decimal format)
+                    // Convert European decimal format (comma to period)
                     double score;
                     try {
-                        scoreStr = scoreStr.replace(",", "."); // Convert comma to dot for decimal format
+                        scoreStr = scoreStr.replace(",", ".");
                         score = Double.parseDouble(scoreStr);
                     } catch (NumberFormatException e) {
+                        System.out.println("Invalid score format for candidate: " + candidateEmail);
                         invalidFormatCount++;
                         continue;
                     }
 
-                    Optional<CodingRound> codingRoundOpt = codingRoundRepository.findByCandidateEmail(candidateEmail)
-                            .stream().findFirst();
-
+                    Optional<CodingRound> codingRoundOpt = codingRoundRepository.findByCandidateEmail(candidateEmail);
                     if (codingRoundOpt.isPresent()) {
                         CodingRound codingRound = codingRoundOpt.get();
+                        System.out.println("Updating score for: " + candidateEmail +
+                                " | Old Score: " + codingRound.getScore() +
+                                " -> New Score: " + score);
                         codingRound.setScore(score);
                         codingRoundRepository.save(codingRound);
                         updatedCount++;
                     } else {
+                        System.out.println("Candidate email not found in database: " + candidateEmail);
                         notFoundCount++;
                     }
-
                 } catch (IllegalArgumentException e) {
+                    System.out.println("Error processing record: " + e.getMessage());
                     invalidFormatCount++;
                 }
             }
         } catch (IOException e) {
             return Map.of("error", "Error processing CSV file: " + e.getMessage());
         }
+
+        System.out.println("Score update process completed. " +
+                "Updated: " + updatedCount +
+                ", Not Found: " + notFoundCount +
+                ", Missing Data: " + missingDataCount +
+                ", Invalid Format: " + invalidFormatCount);
 
         return Map.of(
                 "message", "Score update completed",
@@ -96,6 +113,7 @@ public class CodingRoundService {
                 "invalidFormatCount", invalidFormatCount
         );
     }
+
 
     // **Method to send coding round invitation**
     public CodingRound sendCodingRound(String assessmentId, LocalDate codingTestDate, LocalTime codingTestStartTime,
