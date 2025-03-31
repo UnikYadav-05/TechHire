@@ -32,7 +32,7 @@ public class AddInterview {
     private String assignedManager; // Manager Name or ID
     private String meetingLink; // URL if online
     private List<String> interviewPanelMembers; // List of panelists
-    private String status; // Scheduled/Completed/Cancelled
+    private String status = "Scheduled"; // Scheduled/Completed/Cancelled
     private String jobId; // Related Job ID
 
     @CreatedDate

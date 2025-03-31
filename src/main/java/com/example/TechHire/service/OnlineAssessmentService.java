@@ -69,56 +69,72 @@ public class OnlineAssessmentService {
         int updatedCount = 0;
         int notFoundCount = 0;
         int missingDataCount = 0;
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
-             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
-
+        int invalidFormatCount = 0;
+        // Create CSV format with semicolon delimiter and proper header handling
+        CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
+                .setDelimiter(';')
+                .setHeader()
+                .setSkipHeaderRecord(true)
+                .setIgnoreHeaderCase(true)
+                .setTrim(true)
+                .build();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
+             CSVParser csvParser = new CSVParser(reader, csvFormat)) {
             for (CSVRecord record : csvParser) {
-                String candidateEmail = record.get("Candidate Email").trim();
-                String scoreStr = record.get("Score").trim();
-
-                System.out.println("Processing record: Email=" + candidateEmail + ", Score=" + scoreStr); // 🔹 Print to check values
-
-                if (candidateEmail.isEmpty() || scoreStr.isEmpty()) {
-                    missingDataCount++;
-                    System.out.println("Skipping record due to missing data.");
-                    continue;
-                }
-
                 try {
-                    double score = Double.parseDouble(scoreStr);
+                    // Get values with case-insensitive header names
+                    String candidateEmail = record.get("CandidateEmail");
+                    String scoreStr = record.get("Score");
+                    System.out.println("Processing record: Email=" + candidateEmail + ", Score=" + scoreStr);
+                    if (candidateEmail == null || candidateEmail.isEmpty() ||
+                            scoreStr == null || scoreStr.isEmpty()) {
+                        missingDataCount++;
+                        System.out.println("Skipping record due to missing data.");
+                        continue;
+                    }
+                    // Handle score format (replace comma with period for decimal)
+                    double score;
+                    try {
+                        scoreStr = scoreStr.replace(",", "."); // Convert European decimal format
+                        score = Double.parseDouble(scoreStr);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid score format for candidate: " + candidateEmail);
+                        invalidFormatCount++;
+                        continue;
+                    }
                     Optional<OnlineAssessment> assessmentOpt = onlineAssessmentRepository.findByCandidateEmail(candidateEmail);
-
                     if (assessmentOpt.isPresent()) {
                         OnlineAssessment assessment = assessmentOpt.get();
-                        System.out.println("Updating score for: " + candidateEmail + " | Old Score: " + assessment.getScore() + " -> New Score: " + score);
-
-                        assessment.setScore(score);  // ✅ Update the score properly
-                        onlineAssessmentRepository.save(assessment);  // ✅ Save updated assessment
-
-                        System.out.println("Successfully updated score for: " + candidateEmail);
+                        System.out.println("Updating score for: " + candidateEmail +
+                                " | Old Score: " + assessment.getScore() +
+                                " -> New Score: " + score);
+                        assessment.setScore(score);
+                        onlineAssessmentRepository.save(assessment);
                         updatedCount++;
                     } else {
                         System.out.println("Candidate email not found in database: " + candidateEmail);
                         notFoundCount++;
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid score format for candidate: " + candidateEmail);
-                    missingDataCount++;
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error processing record: " + e.getMessage());
+                    invalidFormatCount++;
                 }
             }
-
         } catch (IOException e) {
             return Map.of("error", "Error processing CSV file: " + e.getMessage());
         }
-
-        System.out.println("Score update process completed. Updated: " + updatedCount + ", Not Found: " + notFoundCount + ", Missing Data: " + missingDataCount);
-
+        System.out.println("Score update process completed. " +
+                "Updated: " + updatedCount +
+                ", Not Found: " + notFoundCount +
+                ", Missing Data: " + missingDataCount +
+                ", Invalid Format: " + invalidFormatCount);
         return Map.of(
                 "message", "Score update completed",
                 "updatedCount", updatedCount,
                 "notFoundCount", notFoundCount,
-                "missingDataCount", missingDataCount
+                "missingDataCount", missingDataCount,
+                "invalidFormatCount", invalidFormatCount
         );
     }
 

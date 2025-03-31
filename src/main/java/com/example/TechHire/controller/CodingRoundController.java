@@ -3,25 +3,28 @@ package com.example.TechHire.controller;
 import com.example.TechHire.entity.CodingRound;
 import com.example.TechHire.service.CodingRoundService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/codingRound")
-@CrossOrigin(origins = "*")  // Allow requests from frontend (React, Angular, etc.)
+@CrossOrigin(origins = "*")
 public class CodingRoundController {
 
     @Autowired
     private CodingRoundService codingRoundService;
 
-
+    // **Send Coding Round**
     @PostMapping("/{assessmentId}")
-    public CodingRound sendCodingRound(
+    public ResponseEntity<CodingRound> sendCodingRound(
             @PathVariable String assessmentId,
             @RequestBody CodingRound codingRound) {
 
-        return codingRoundService.sendCodingRound(
+        CodingRound savedCodingRound = codingRoundService.sendCodingRound(
                 assessmentId,
                 codingRound.getCodingTestDate(),
                 codingRound.getCodingTestStartTime(),
@@ -30,22 +33,32 @@ public class CodingRoundController {
                 codingRound.getCodingPlatformUrl(),
                 codingRound.getInstructions()
         );
+
+        return ResponseEntity.ok(savedCodingRound);
     }
 
+    // **Upload CSV to update scores**
+    @PostMapping("/uploadCsv")
+    public ResponseEntity<Map<String, Object>> uploadCsvFile(@RequestParam("file") MultipartFile file) {
+        Map<String, Object> response = codingRoundService.updateCodingRoundScoresFromCsv(file);
+        return ResponseEntity.ok(response);
+    }
+
+    // **Get all coding rounds**
     @GetMapping
-    public List<CodingRound> getAllCodingRounds() {
-        return codingRoundService.getAllCodingRounds();
+    public ResponseEntity<List<CodingRound>> getAllCodingRounds() {
+        return ResponseEntity.ok(codingRoundService.getAllCodingRounds());
     }
 
-
+    // **Get coding rounds by job**
     @GetMapping("/job/{jobId}")
-    public List<CodingRound> getCodingRoundsByJob(@PathVariable String jobId) {
-        return codingRoundService.getCodingRoundsByJob(jobId);
+    public ResponseEntity<List<CodingRound>> getCodingRoundsByJob(@PathVariable String jobId) {
+        return ResponseEntity.ok(codingRoundService.getCodingRoundsByJob(jobId));
     }
 
-
+    // **Get coding rounds by candidate**
     @GetMapping("/candidate/{candidateId}")
-    public List<CodingRound> getCodingRoundsByCandidate(@PathVariable String candidateId) {
-        return codingRoundService.getCodingRoundsByCandidate(candidateId);
+    public ResponseEntity<List<CodingRound>> getCodingRoundsByCandidate(@PathVariable String candidateId) {
+        return ResponseEntity.ok(codingRoundService.getCodingRoundsByCandidate(candidateId));
     }
 }

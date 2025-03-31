@@ -2,9 +2,11 @@ package com.example.TechHire.service;
 
 import com.example.TechHire.entity.Candidate;
 import com.example.TechHire.entity.AddInterview;
+import com.example.TechHire.entity.CodingRound;
 import com.example.TechHire.entity.JobPosting;
 import com.example.TechHire.repository.CandidateRepository;
 import com.example.TechHire.repository.AddInterviewRepository;
+import com.example.TechHire.repository.CodingRoundRepository;
 import com.example.TechHire.repository.JobPostingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,12 +29,26 @@ public class AddInterviewService {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private CodingRoundRepository codingRoundRepository;
+
     // Schedule an interview
     public AddInterview scheduleInterview(String candidateId, String jobId, AddInterview interview) {
         Candidate candidate = candidateRepository.findById(candidateId)
                 .orElseThrow(() -> new RuntimeException("Candidate not found"));
         JobPosting job = jobPostingRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        List<CodingRound> codingRounds = codingRoundRepository.findByCandidateId(candidateId);
+        if (codingRounds.isEmpty()) {
+            throw new RuntimeException("Coding round not found for candidate: " + candidateId);
+        }
+
+        // 🔹 Update the latest coding round (assuming last one is the latest)
+        CodingRound latestCodingRound = codingRounds.get(codingRounds.size() - 1);
+        latestCodingRound.setStatus("Scheduled");
+        codingRoundRepository.save(latestCodingRound);
+
 
         interview.setCandidateId(candidate.getId());
         interview.setName(candidate.getName());
