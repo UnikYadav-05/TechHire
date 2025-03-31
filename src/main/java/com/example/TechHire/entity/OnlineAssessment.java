@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 @Document(collection = "online_assessment")
 @Data
@@ -16,8 +17,8 @@ public class OnlineAssessment {
     private String jobAppliedId;
     private String appliedFor;
     private String status; // "Pending", "Completed", "Expired"
-    private LocalDate testDate;
-    private LocalTime testDeadline;
+    private Date testDate;
+    private Date testDeadline;
     private String attachments;
     private String type_of_test;
     private Double score;
@@ -26,7 +27,7 @@ public class OnlineAssessment {
     private String phoneNumber;
 
     public OnlineAssessment(String candidateId, String jobId, String jobAppliedId, String appliedFor,
-                            LocalDate testDate, LocalTime testDeadline, String attachments , String type_of_test,
+                            Date testDate, Date testDeadline, String attachments , String type_of_test,
                             String candidateName, String candidateEmail, String phoneNumber) {
         this.candidateId = candidateId;
         this.jobId = jobId;

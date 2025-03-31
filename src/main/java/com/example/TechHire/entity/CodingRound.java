@@ -37,6 +37,6 @@ public class CodingRound {
         this.codingTestDeadline = codingTestDeadline;
         this.codingPlatformUrl = codingPlatformUrl;
         this.instructions = instructions;
-        this.status = "Pending";
+        this.status = "Coding_Round";
     }
 }

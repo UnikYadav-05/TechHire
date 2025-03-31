@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,8 +34,8 @@ public class OnlineAssessmentService {
     @Autowired
     private NotificationService notificationService;
 
-    public OnlineAssessment sendOnlineAssessment(String shortlistId, LocalDate testDate,
-                                                 LocalTime testDeadline, String attachments , String type_of_test) {
+    public OnlineAssessment sendOnlineAssessment(String shortlistId, Date testDate,
+                                                 Date testDeadline, String attachments , String type_of_test) {
 
         ShortlistCandidate shortlistCandidate = shortlistCandidateRepository.findById(shortlistId)
                 .orElseThrow(() -> new RuntimeException("Shortlisted Candidate not found"));

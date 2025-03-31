@@ -29,6 +29,9 @@ public class CodingRoundService {
         OnlineAssessment onlineAssessment = onlineAssessmentRepository.findById(assessmentId)
                 .orElseThrow(() -> new RuntimeException("Online Assessment not found"));
 
+        onlineAssessment.setStatus("Coding_Round");
+        onlineAssessmentRepository.save(onlineAssessment);
+
         CodingRound codingRound = new CodingRound(
                 onlineAssessment.getCandidateId(),
                 onlineAssessment.getJobId(),
